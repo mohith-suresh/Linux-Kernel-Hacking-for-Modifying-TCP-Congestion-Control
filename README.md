@@ -1,4 +1,22 @@
+# Linux Kernel Hacking: High‑Throughput TCP for Lossy Links
 
+Accelerated TCP for high‑latency, lossy networks via kernel‑level congestion control changes.
+This project removes exponential backoff, enables rapid loss recovery, and keeps windows large to
+maximize goodput in cloud and wide‑area environments.
+
+- Result: 10.4 Mb/s on a 100 Mb/s, 200 ms RTT, 20% random loss path — 132× over standard TCP (0.079 Mb/s baseline)
+- Focus: Linux Kernel, TCP Congestion Control, Performance Engineering, Systems, Cloud Networking
+- Scope: 47 targeted changes across 8 TCP modules (`tcp_timer.c`, `tcp.h`, `tcp_cong.c`, `tcp_input.c`, `tcp_output.c`, `tcp.c`, `tcp_veno.c`, `tcp_hybla.c`)
+
+Quick reproduce (controlled testbed)
+- Emulate path: `tc qdisc add dev <if> root netem rate 100mbit delay 200ms loss 20%`
+- Server: `iperf3 -s`
+- Client: `iperf3 -c <server> -t 60 -P 4`
+- Large file: `dd if=/dev/zero of=1G.bin bs=1M count=1024 && scp 1G.bin user@host:/tmp/`
+
+Fairness note
+- This intentionally violates standard TCP fairness assumptions for loss‑tolerant throughput. Use only in
+  controlled networks (satellite/backhaul/testbeds), not on shared public networks.
 
 ## Overview
 This project implements a custom Linux TCP kernel modification that removes exponential backoff to improve performance over lossy links. The implementation follows the approach described in "Removing Exponential Back-off from TCP" paper.
@@ -95,7 +113,7 @@ This project implements a custom Linux TCP kernel modification that removes expo
 9. **Aggressive window growth** - increases by 3 instead of 1
 
 ## Performance Target
-- **Achieved** 10.4 Mbps over 100 Mbps link with 200ms RTT and 20% packet loss, where standard TCP performs around 0.079Mbps. 132X increase in throughput.
+- **Achieved** 10.4 Mb/s over 100 Mb/s link with 200 ms RTT and 20% packet loss, where standard TCP performs around 0.079 Mb/s. 132× increase in throughput.
 - **Method:** Aggressive retransmission without exponential backoff delays
 - **Use Case:** Optimized for satellite links and high-latency lossy connections
 
