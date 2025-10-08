@@ -95,7 +95,7 @@ This project implements a custom Linux TCP kernel modification that removes expo
 9. **Aggressive window growth** - increases by 3 instead of 1
 
 ## Performance Target
-- **Achieved** 10.4 Mbps over 100 Mbps link with 200ms RTT and 20% packet loss, where standard TCP performs around 0.79Mbps. 132X increase in throughput.
+- **Achieved** 10.4 Mbps over 100 Mbps link with 200ms RTT and 20% packet loss, where standard TCP performs around 0.079Mbps. 132X increase in throughput.
 - **Method:** Aggressive retransmission without exponential backoff delays
 - **Use Case:** Optimized for satellite links and high-latency lossy connections
 
